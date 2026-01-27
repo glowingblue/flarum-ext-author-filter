@@ -1,1 +1,18 @@
 glowingblue-author-filter:
+  admin:
+    settings:
+      intro: Les utilisateurs sans la permission <code>Rechercher des utilisateurs</code> ne verront pas le champ de recherche. Définissez sur <code>Tout le monde</code> pour tous les utilisateurs, ou selon le niveau que vous préférez.
+      min_length: Nombre minimum de caractères pour commencer la recherche
+      result_count: Nombre maximum de résultats dans l’autocomplétion de la liste déroulante
+
+  forum:
+    index_page:
+      filter_user:
+        accessible_label: Filtrer par auteur
+        all: Tous
+        label: 'Filtrer par auteur : {text}'
+        search_label: Rechercher des utilisateurs...
+        no_results: Aucun résultat
+        start_typing: Commencez à taper...
+        keep_typing: Continuez à taper...
+        remove_filter: Supprimer le filtre d’auteur

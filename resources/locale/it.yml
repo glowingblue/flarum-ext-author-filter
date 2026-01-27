@@ -1,1 +1,18 @@
 glowingblue-author-filter:
+  admin:
+    settings:
+      intro: Gli utenti senza il permesso <code>Cerca utenti</code> non vedranno la casella di ricerca. Imposta su <code>Tutti</code> per tutti gli utenti, oppure sul livello che preferisci.
+      min_length: Numero minimo di caratteri per iniziare la ricerca
+      result_count: Numero massimo di risultati nell’autocompletamento a tendina
+
+  forum:
+    index_page:
+      filter_user:
+        accessible_label: Filtra per autore
+        all: Tutti
+        label: 'Filtra per autore: {text}'
+        search_label: Cerca utenti...
+        no_results: Nessun risultato
+        start_typing: Inizia a digitare...
+        keep_typing: Continua a digitare...
+        remove_filter: Rimuovi filtro autore
