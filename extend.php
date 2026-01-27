@@ -37,5 +37,5 @@ return [
     (new Extend\ApiSerializer(ForumSerializer::class))
         ->attribute('canUseAuthorFilter', function (ForumSerializer $serializer) {
             return $serializer->getActor()->can('searchUsers');
-        })
+        }),
 ];

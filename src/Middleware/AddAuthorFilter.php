@@ -26,7 +26,7 @@ class AddAuthorFilter implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         // We only want to apply filtering if we show the discussion list.
-        if (! $this->isDiscussionListPath($request)) {
+        if (!$this->isDiscussionListPath($request)) {
             return $handler->handle($request);
         }
 
@@ -38,7 +38,7 @@ class AddAuthorFilter implements MiddlewareInterface
             ]);
 
             if (!empty($params['q'])) {
-                $params['q'] = trim($params['q']) . ' author:' . $author;
+                $params['q'] = trim($params['q']).' author:'.$author;
             }
 
             $request = $request->withQueryParams($params);
