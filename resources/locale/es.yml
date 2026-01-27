@@ -1,1 +1,18 @@
 glowingblue-author-filter:
+  admin:
+    settings:
+      intro: Los usuarios sin el permiso <code>Buscar usuarios</code> no verán el cuadro de búsqueda. Configúralo en <code>Todos</code> para todos los usuarios, o al nivel que prefieras.
+      min_length: Número mínimo de caracteres para comenzar la búsqueda
+      result_count: Número máximo de resultados en el autocompletado del desplegable
+
+  forum:
+    index_page:
+      filter_user:
+        accessible_label: Filtrar por autor
+        all: Todos
+        label: 'Filtrar por autor: {text}'
+        search_label: Buscar usuarios...
+        no_results: Sin resultados
+        start_typing: Empieza a escribir...
+        keep_typing: Sigue escribiendo...
+        remove_filter: Quitar filtro de autor

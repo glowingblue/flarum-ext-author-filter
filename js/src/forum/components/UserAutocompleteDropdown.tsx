@@ -54,13 +54,13 @@ export default class UserAutocompleteDropdown extends Component<IAttrs, IState> 
 				<span>
 					{extractText(
 						app.translator.trans(
-							`blomstra-user-filter.forum.index_page.filter_user.${this.state.searchQuery().length === 0 ? 'start_typing' : 'keep_typing'}`
+							`glowingblue-author-filter.forum.index_page.filter_user.${this.state.searchQuery().length === 0 ? 'start_typing' : 'keep_typing'}`
 						)
 					)}
 				</span>
 			);
 		} else if (!this.state.currentData?.length) {
-			content.push(<span>{extractText(app.translator.trans('blomstra-user-filter.forum.index_page.filter_user.no_results'))}</span>);
+			content.push(<span>{extractText(app.translator.trans('glowingblue-author-filter.forum.index_page.filter_user.no_results'))}</span>);
 		} else {
 			content.push(
 				this.state.currentData?.map((user) => (
@@ -81,7 +81,7 @@ export default class UserAutocompleteDropdown extends Component<IAttrs, IState> 
 			content.push(
 				<Separator />,
 				<Button class="Button" icon="fas fa-times" onclick={() => this.handleUserChange(null)}>
-					{extractText(app.translator.trans('blomstra-user-filter.forum.index_page.filter_user.remove_filter'))}
+					{extractText(app.translator.trans('glowingblue-author-filter.forum.index_page.filter_user.remove_filter'))}
 				</Button>
 			);
 		}
@@ -91,7 +91,7 @@ export default class UserAutocompleteDropdown extends Component<IAttrs, IState> 
 				buttonClassName="Button"
 				label={this.label}
 				updateOnClose
-				accessibleToggleLabel={app.translator.trans('blomstra-user-filter.forum.index_page.filter_user.accessible_label')}
+				accessibleToggleLabel={app.translator.trans('glowingblue-author-filter.forum.index_page.filter_user.accessible_label')}
 				onshow={() => {
 					$('input').focus();
 				}}
@@ -99,7 +99,7 @@ export default class UserAutocompleteDropdown extends Component<IAttrs, IState> 
 				<input
 					type="text"
 					class="FormControl"
-					placeholder={extractText(app.translator.trans('blomstra-user-filter.forum.index_page.filter_user.search_label'))}
+					placeholder={extractText(app.translator.trans('glowingblue-author-filter.forum.index_page.filter_user.search_label'))}
 					value={this.state.value()}
 					oninput={(e: InputEvent) => {
 						this.state.value(e.currentTarget!.value);
@@ -172,7 +172,7 @@ export default class UserAutocompleteDropdown extends Component<IAttrs, IState> 
 
 	get label() {
 		function wrapLabel(text: Mithril.Children) {
-			return app.translator.trans('blomstra-user-filter.forum.index_page.filter_user.label', { text: <b>{text}</b> });
+			return app.translator.trans('glowingblue-author-filter.forum.index_page.filter_user.label', { text: <b>{text}</b> });
 		}
 
 		if (app.search.params().author) {
@@ -188,6 +188,6 @@ export default class UserAutocompleteDropdown extends Component<IAttrs, IState> 
 			}
 		}
 
-		return wrapLabel(app.translator.trans('blomstra-user-filter.forum.index_page.filter_user.all'));
+		return wrapLabel(app.translator.trans('glowingblue-author-filter.forum.index_page.filter_user.all'));
 	}
 }

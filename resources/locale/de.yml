@@ -1,1 +1,18 @@
 glowingblue-author-filter:
+  admin:
+    settings:
+      intro: Benutzer ohne die Berechtigung <code>Benutzer suchen</code> sehen das Suchfeld nicht. Setze dies auf <code>Jeder</code> für alle Benutzer oder auf die von dir bevorzugte Stufe.
+      min_length: Mindestanzahl Zeichen, um die Suche zu starten
+      result_count: Maximale Anzahl Ergebnisse in der Dropdown-Autovervollständigung
+
+  forum:
+    index_page:
+      filter_user:
+        accessible_label: Nach Autor filtern
+        all: Alle
+        label: 'Nach Autor filtern: {text}'
+        search_label: Benutzer suchen...
+        no_results: Keine Ergebnisse
+        start_typing: Tippe los...
+        keep_typing: Weiter tippen...
+        remove_filter: Autorenfilter entfernen
