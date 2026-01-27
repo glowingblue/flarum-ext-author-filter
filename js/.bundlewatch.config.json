@@ -1,0 +1,15 @@
+{
+    "files": [
+        {
+            "path": "./dist/*.js",
+            "maxSize": "40KB"
+        }
+    ],
+    "defaultCompression": "gzip",
+    "ci": {
+        "repoBranchBase": "1.x",
+        "trackBranches": [
+            "1.x"
+        ]
+    }
+}
