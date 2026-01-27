@@ -11,6 +11,7 @@
 
 namespace GlowingBlue\AuthorFilter;
 
+use Flarum\Api\Serializer\ForumSerializer;
 use Flarum\Extend;
 
 return [
@@ -32,4 +33,9 @@ return [
         ->default('authorFilterMaxResults', 5)
         ->serializeToForum('authorFilterMinSearchLength', 'glowingblue-author-filter.min_search_length', 'intval')
         ->serializeToForum('authorFilterMaxResults', 'glowingblue-author-filter.max_results', 'intval'),
+
+    (new Extend\ApiSerializer(ForumSerializer::class))
+        ->attribute('canUseAuthorFilter', function (ForumSerializer $serializer) {
+            return $serializer->getActor()->can('searchUsers');
+        })
 ];
