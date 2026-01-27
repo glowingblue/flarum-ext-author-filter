@@ -23,4 +23,13 @@ return [
         ->css(__DIR__.'/resources/less/admin.less'),
 
     new Extend\Locales(__DIR__.'/resources/locale'),
+
+    (new Extend\Middleware('forum'))
+        ->add(Middleware\AddAuthorFilter::class),
+
+    (new Extend\Settings())
+        ->default('authorFilterMinSearchLength', 3)
+        ->default('authorFilterMaxResults', 5)
+        ->serializeToForum('authorFilterMinSearchLength', 'glowingblue-author-filter.min_search_length', 'intval')
+        ->serializeToForum('authorFilterMaxResults', 'glowingblue-author-filter.max_results', 'intval'),
 ];

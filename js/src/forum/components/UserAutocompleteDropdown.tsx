@@ -120,13 +120,13 @@ export default class UserAutocompleteDropdown extends Component<IAttrs, IState> 
 	}
 
 	protected minSearchLength(): number {
-		const val = app.forum.attribute<number>('blomstraUserFilter.minSearchLength');
+		const val = app.forum.attribute<number>('authorFilterMinSearchLength');
 
 		return val > 0 ? val : 3;
 	}
 
 	protected maxResults(): number {
-		const val = app.forum.attribute<number>('blomstraUserFilter.resultCount');
+		const val = app.forum.attribute<number>('authorFilterMaxResults');
 
 		return val > 0 ? val : 5;
 	}
