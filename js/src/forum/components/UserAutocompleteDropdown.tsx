@@ -47,22 +47,17 @@ export default class UserAutocompleteDropdown extends Component<IAttrs, IState> 
 		let content = [];
 
 		if (this.state.loading) {
-			content.push(<LoadingIndicator />);
+			content.push(<Separator />, <LoadingIndicator />);
 		} else if (this.state.searchQuery().length < this.minSearchLength()) {
 			this.state.lastSearchedQuery = '';
-			content.push(
-				<span>
-					{extractText(
-						app.translator.trans(
-							`glowingblue-author-filter.forum.index_page.filter_user.${this.state.searchQuery().length === 0 ? 'start_typing' : 'keep_typing'}`
-						)
-					)}
-				</span>
-			);
 		} else if (!this.state.currentData?.length) {
-			content.push(<span>{extractText(app.translator.trans('glowingblue-author-filter.forum.index_page.filter_user.no_results'))}</span>);
+			content.push(
+				<Separator />,
+				<span>{extractText(app.translator.trans('glowingblue-author-filter.forum.index_page.filter_user.no_results'))}</span>
+			);
 		} else {
 			content.push(
+				<Separator />,
 				this.state.currentData?.map((user) => (
 					<Button
 						class="BlomstraUserFilter-item Button"
@@ -111,8 +106,6 @@ export default class UserAutocompleteDropdown extends Component<IAttrs, IState> 
 						}, DEBOUNCE_TIME);
 					}}
 				/>
-
-				<Separator />
 
 				{content}
 			</Dropdown>
