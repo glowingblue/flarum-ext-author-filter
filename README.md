@@ -34,7 +34,8 @@ php flarum cache:clear
 ## Links
 
 - [Packagist](https://packagist.org/packages/glowingblue/author-filter)
-- [GitHub](https://github.com/glowingblue/flarum-ext-author-filter)
+- [GitHub](https://github.com/glowingblue/flarum-ext-author-filter),
+- [Discuss](https://discuss.flarum.org/d/39420-gb-author-filter)
 
 ## Acknowledgements
 
