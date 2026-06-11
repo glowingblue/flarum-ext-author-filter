@@ -26,7 +26,8 @@
     ],
     "support": {
         "issues": "https://github.com/glowingblue/flarum-ext-author-filter/issues",
-        "source": "https://github.com/glowingblue/flarum-ext-author-filter"
+        "source": "https://github.com/glowingblue/flarum-ext-author-filter",
+        "forum": "https://discuss.flarum.org/d/39420-gb-author-filter"
     },
     "autoload": {
         "psr-4": {
