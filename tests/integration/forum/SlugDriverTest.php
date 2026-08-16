@@ -57,8 +57,8 @@ class SlugDriverTest extends TestCase
     public static function slugDrivers(): array
     {
         return [
-            'default (username)' => ['default', 'normal'],
-            'id' => ['id', '2'],
+            'default (username)'   => ['default', 'normal'],
+            'id'                   => ['id', '2'],
             'id_with_display_name' => ['id_with_display_name', '2-normal'],
         ];
     }
