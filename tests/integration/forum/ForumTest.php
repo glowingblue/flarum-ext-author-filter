@@ -12,6 +12,7 @@
 namespace GlowingBlue\AuthorFilter\Tests\integration\forum;
 
 use Flarum\Testing\integration\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class ForumTest extends TestCase
 {
@@ -22,9 +23,7 @@ class ForumTest extends TestCase
         $this->extension('glowingblue-author-filter');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function extension_boots_and_serializes()
     {
         $response = $this->send($this->request('GET', '/'));
