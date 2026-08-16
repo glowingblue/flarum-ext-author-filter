@@ -4,15 +4,12 @@ import DiscussionListState from 'flarum/forum/states/DiscussionListState';
 
 export default function extendDiscussionListState() {
 	extend(DiscussionListState.prototype, 'requestParams', function (this: DiscussionListState, params: Record<string, any>) {
-		const author = app.search.params().author;
+		const author = app.search.state.params().author;
 
 		if (!author) return;
 
+		// Core's AuthorGambit owns the `q` representation of this filter, so we
+		// only need to set the filter itself.
 		params.filter.author = author;
-
-		const q = params.filter.q;
-		if (q) {
-			params.filter.q = `${q} author:${author}`;
-		}
 	});
 }
