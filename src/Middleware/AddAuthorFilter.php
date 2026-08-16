@@ -32,18 +32,15 @@ class AddAuthorFilter implements MiddlewareInterface
 
         $params = $request->getQueryParams();
 
+        // Translate our `?author=` query param into the `filter[author]` that
+        // core's discussion AuthorFilter understands. The `q` gambit is left
+        // alone: core applies the author gambit itself.
         if ($author = Arr::pull($params, 'author')) {
             $params['filter'] = array_merge($params['filter'] ?? [], [
                 'author' => $author,
             ]);
 
-            if (!empty($params['q'])) {
-                $params['q'] = trim($params['q']).' author:'.$author;
-            }
-
             $request = $request->withQueryParams($params);
-
-            return $handler->handle($request);
         }
 
         return $handler->handle($request);
@@ -53,24 +50,20 @@ class AddAuthorFilter implements MiddlewareInterface
     {
         $path = $request->getAttribute('originalUri')->getPath();
 
-        // Check for the 'index' route (showing all discussions)
-        /** @var SettingsRepositoryInterface */
+        // The discussion list lives at `/all`, and additionally at `/` when it
+        // is the configured default route.
+        if ($path === '/all') {
+            return true;
+        }
+
+        /** @var SettingsRepositoryInterface $settings */
         $settings = resolve(SettingsRepositoryInterface::class);
-        $defaultRoute = $settings->get('default_route');
 
-        if ($defaultRoute === '/all') {
-            if ($path === '/') {
-                return true;
-            }
-        } elseif ($path === '/all') {
+        if ($path === '/' && $settings->get('default_route') === '/all') {
             return true;
         }
 
-        // Check for the 'tag' route (tag page)
-        if (substr($path, 0, 2) === '/t') {
-            return true;
-        }
-
-        return false;
+        // Tag pages (`/t/{slug}`) also render the discussion list.
+        return $path === '/t' || str_starts_with($path, '/t/');
     }
 }

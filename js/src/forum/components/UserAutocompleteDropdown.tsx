@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import Component from 'flarum/common/Component';
 import Button from 'flarum/common/components/Button';
 import Dropdown from 'flarum/common/components/Dropdown';
@@ -17,170 +15,202 @@ import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
 interface IAttrs {}
 
 interface IState {
-  currentData: User[];
-  value: Stream<string>;
-  searchQuery: Stream<string>;
-  lastSearchedQuery: string;
-  loading: boolean;
-  timeoutKey: number | null;
+	currentData: User[];
+	value: Stream<string>;
+	searchQuery: Stream<string>;
+	lastSearchedQuery: string;
+	loading: boolean;
+	timeoutKey: ReturnType<typeof setTimeout> | null;
+	/** Slugs we have already tried to resolve, to avoid re-requesting on every redraw. */
+	requestedSlugs: Set<string>;
 }
 
 const DEBOUNCE_TIME = 250;
 
 export default class UserAutocompleteDropdown extends Component<IAttrs, IState> {
-  oninit(vnode: Mithril.Vnode<IAttrs, this>): void {
-    super.oninit(vnode);
+	oninit(vnode: Mithril.Vnode<IAttrs, this>): void {
+		super.oninit(vnode);
 
-    this.state = {
-      currentData: [],
-      value: Stream(''),
-      searchQuery: Stream(''),
-      lastSearchedQuery: '',
-      loading: false,
-      timeoutKey: null,
-    };
-  }
+		this.state = {
+			currentData: [],
+			value: Stream(''),
+			searchQuery: Stream(''),
+			lastSearchedQuery: '',
+			loading: false,
+			timeoutKey: null,
+			requestedSlugs: new Set(),
+		};
+	}
 
-  view() {
-    this.performSearch(this.state.searchQuery());
+	/**
+	 * Resolve the user a slug refers to.
+	 *
+	 * The slug format depends on the configured user slug driver (username, id,
+	 * or id-with-display-name), so it cannot be rendered as a name directly. If
+	 * the user isn't in the store yet — e.g. on a fresh page load with `author`
+	 * already in the URL — fetch them by slug.
+	 */
+	protected resolveUser(slug: string): User | undefined {
+		const user = app.store.getBy<User>('users', 'slug', slug);
 
-    let content = [];
+		if (user || this.state.requestedSlugs.has(slug)) return user;
 
-    if (this.state.loading) {
-      content.push(<Separator />, <LoadingIndicator />);
-    } else if (this.state.searchQuery().length < this.minSearchLength()) {
-      this.state.lastSearchedQuery = '';
-    } else if (!this.state.currentData?.length) {
-      content.push(
-        <Separator />,
-        <span>{extractText(app.translator.trans('glowingblue-author-filter.forum.index_page.filter_user.no_results'))}</span>
-      );
-    } else {
-      content.push(
-        <Separator />,
-        this.state.currentData?.map((user) => (
-          <Button
-            class="BlomstraUserFilter-item Button"
-            onclick={() => {
-              this.handleUserChange(user);
-            }}
-          >
-            <Avatar user={user} /> {username(user)}
-          </Button>
-        ))
-      );
-    }
+		this.state.requestedSlugs.add(slug);
 
-    if (app.search.state.params().author) {
-      // if author is set
-      content.push(
-        <Separator />,
-        <Button class="Button" icon="fas fa-times" onclick={() => this.handleUserChange(null)}>
-          {extractText(app.translator.trans('glowingblue-author-filter.forum.index_page.filter_user.remove_filter'))}
-        </Button>
-      );
-    }
+		app.store
+			.find<User>('users', slug, { bySlug: true })
+			.then(() => m.redraw())
+			.catch(() => {
+				// The slug matches no visible user; drop the filter.
+				this.handleUserChange(null);
+			});
 
-    return (
-      <Dropdown
-        buttonClassName="Button"
-        label={this.label}
-        updateOnClose
-        accessibleToggleLabel={app.translator.trans('glowingblue-author-filter.forum.index_page.filter_user.accessible_label')}
-        onshow={() => {
-          $('input').focus();
-        }}
-      >
-        <input
-          type="text"
-          class="FormControl"
-          placeholder={extractText(app.translator.trans('glowingblue-author-filter.forum.index_page.filter_user.search_label'))}
-          value={this.state.value()}
-          oninput={(e: InputEvent) => {
-            this.state.value(e.currentTarget!.value);
+		return undefined;
+	}
 
-            this.state.timeoutKey && clearTimeout(this.state.timeoutKey);
-            this.state.timeoutKey = setTimeout(() => {
-              this.state.searchQuery(e.target!.value);
-              m.redraw();
-            }, DEBOUNCE_TIME);
-          }}
-        />
+	view() {
+		this.performSearch(this.state.searchQuery());
 
-        {content}
-      </Dropdown>
-    );
-  }
+		let content = [];
 
-  protected minSearchLength(): number {
-    const val = app.forum.attribute<number>('authorFilterMinSearchLength');
+		if (this.state.loading) {
+			content.push(<Separator />, <LoadingIndicator />);
+		} else if (this.state.searchQuery().length < this.minSearchLength()) {
+			this.state.lastSearchedQuery = '';
+		} else if (!this.state.currentData?.length) {
+			content.push(
+				<Separator />,
+				<span>{extractText(app.translator.trans('glowingblue-author-filter.forum.index_page.filter_user.no_results'))}</span>
+			);
+		} else {
+			content.push(
+				<Separator />,
+				this.state.currentData?.map((user) => (
+					<Button
+						class="BlomstraUserFilter-item Button"
+						onclick={() => {
+							this.handleUserChange(user);
+						}}
+					>
+						<Avatar user={user} /> {username(user)}
+					</Button>
+				))
+			);
+		}
 
-    return val > 0 ? val : 3;
-  }
+		if (app.search.state.params().author) {
+			// if author is set
+			content.push(
+				<Separator />,
+				<Button class="Button" icon="fas fa-times" onclick={() => this.handleUserChange(null)}>
+					{extractText(app.translator.trans('glowingblue-author-filter.forum.index_page.filter_user.remove_filter'))}
+				</Button>
+			);
+		}
 
-  protected maxResults(): number {
-    const val = app.forum.attribute<number>('authorFilterMaxResults');
+		return (
+			<Dropdown
+				buttonClassName="Button"
+				label={this.label}
+				accessibleToggleLabel={app.translator.trans('glowingblue-author-filter.forum.index_page.filter_user.accessible_label')}
+				onshow={() => {
+					this.$('input').trigger('focus');
+				}}
+			>
+				<input
+					type="text"
+					class="FormControl"
+					placeholder={extractText(app.translator.trans('glowingblue-author-filter.forum.index_page.filter_user.search_label'))}
+					value={this.state.value()}
+					oninput={(e: InputEvent) => {
+						const value = (e.currentTarget as HTMLInputElement).value;
 
-    return val > 0 ? val : 5;
-  }
+						this.state.value(value);
 
-  async performSearch(query: string): Promise<void> {
-    if (this.state.lastSearchedQuery === query) return;
+						this.state.timeoutKey && clearTimeout(this.state.timeoutKey);
+						this.state.timeoutKey = setTimeout(() => {
+							this.state.searchQuery(value);
+							m.redraw();
+						}, DEBOUNCE_TIME);
+					}}
+				/>
 
-    if (this.state.searchQuery().length < this.minSearchLength()) {
-      this.state.currentData = [];
-      return;
-    }
+				{content}
+			</Dropdown>
+		);
+	}
 
-    this.state.loading = true;
-    this.state.lastSearchedQuery = query;
-    m.redraw();
+	protected minSearchLength(): number {
+		const val = app.forum.attribute<number>('authorFilterMinSearchLength');
 
-    const data = await app.store.find<User[]>('users', { filter: { q: query }, page: { limit: this.maxResults() } });
+		return val > 0 ? val : 3;
+	}
 
-    // Prevent race conditions where a new search will finish before an old search
-    if (this.state.searchQuery() !== query) return;
+	protected maxResults(): number {
+		const val = app.forum.attribute<number>('authorFilterMaxResults');
 
-    this.state.currentData = data;
+		return val > 0 ? val : 5;
+	}
 
-    this.state.loading = false;
-    m.redraw();
-  }
+	async performSearch(query: string): Promise<void> {
+		if (this.state.lastSearchedQuery === query) return;
 
-  handleUserChange(user: User | null) {
-    const params = app.search.params();
+		if (this.state.searchQuery().length < this.minSearchLength()) {
+			this.state.currentData = [];
+			return;
+		}
 
-    const old = params.author;
+		this.state.loading = true;
+		this.state.lastSearchedQuery = query;
+		m.redraw();
 
-    if (!user) {
-      params.author = undefined;
-    } else {
-      params.author = [user].map((user) => user?.slug()).join(',');
-    }
+		const data = await app.store.find<User[]>('users', { filter: { q: query }, page: { limit: this.maxResults() } });
 
-    if (old !== params.author) {
-      m.route.set(app.route(app.current.get('routeName'), { ...params }));
-    }
-  }
+		// Prevent race conditions where a new search will finish before an old search
+		if (this.state.searchQuery() !== query) return;
 
-  get label() {
-    function wrapLabel(text: Mithril.Children) {
-      return app.translator.trans('glowingblue-author-filter.forum.index_page.filter_user.label', { text: <b>{text}</b> });
-    }
+		this.state.currentData = data;
 
-    if (app.search.params().author) {
-      const slug = app.search.params().author.split(',')[0];
-      const count = app.search.params().author.split(',').length;
+		this.state.loading = false;
+		m.redraw();
+	}
 
-      const user = app.store.getBy<User>('users', 'slug', slug);
+	handleUserChange(user: User | null) {
+		const params = app.search.state.params();
 
-      if (!user) {
-        this.handleUserChange(null);
-      } else {
-        return wrapLabel(user.displayName() + (count > 1 ? ` (+${count - 1})` : ''));
-      }
-    }
+		const old = params.author;
 
-    return wrapLabel(app.translator.trans('glowingblue-author-filter.forum.index_page.filter_user.all'));
-  }
+		if (!user) {
+			delete params.author;
+		} else {
+			params.author = user.slug();
+		}
+
+		if (old !== params.author) {
+			m.route.set(app.route(app.current.get('routeName'), { ...params }));
+		}
+	}
+
+	get label() {
+		function wrapLabel(text: Mithril.Children) {
+			return app.translator.trans('glowingblue-author-filter.forum.index_page.filter_user.label', { text: <b>{text}</b> });
+		}
+
+		const author = app.search.state.params().author;
+
+		if (author) {
+			const slugs = author.split(',');
+			const user = this.resolveUser(slugs[0]);
+
+			// While the user is still being fetched, keep the filter intact and
+			// show a neutral label rather than clearing the author.
+			if (user) {
+				return wrapLabel(user.displayName() + (slugs.length > 1 ? ` (+${slugs.length - 1})` : ''));
+			}
+
+			return wrapLabel(app.translator.trans('core.ref.loading'));
+		}
+
+		return wrapLabel(app.translator.trans('glowingblue-author-filter.forum.index_page.filter_user.all'));
+	}
 }

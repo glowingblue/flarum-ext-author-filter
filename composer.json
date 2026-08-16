@@ -14,11 +14,6 @@
     },
     "authors": [
         {
-            "name": "Team Blomstra",
-            "email": "development@blomstra.net",
-            "role": "Developer"
-        },
-        {
             "name": "Glowing Blue AG",
             "email": "dev@glowingblue.com",
             "role": "Developer"
@@ -89,6 +84,7 @@
         "test:setup": "Sets up a database for use with integration tests. Execute this only once."
     },
     "require-dev": {
+        "flarum/nicknames": "^2.0.0",
         "flarum/phpstan": "^2.0.0",
         "flarum/testing": "^2.0.0"
     }
