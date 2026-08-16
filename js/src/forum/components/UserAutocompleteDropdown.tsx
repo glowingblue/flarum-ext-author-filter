@@ -5,7 +5,7 @@ import Button from 'flarum/common/components/Button';
 import Dropdown from 'flarum/common/components/Dropdown';
 import Separator from 'flarum/common/components/Separator';
 import username from 'flarum/common/helpers/username';
-import avatar from 'flarum/common/helpers/avatar';
+import Avatar from 'flarum/common/components/Avatar';
 import User from 'flarum/common/models/User';
 import extractText from 'flarum/common/utils/extractText';
 import app from 'flarum/forum/app';
@@ -65,13 +65,13 @@ export default class UserAutocompleteDropdown extends Component<IAttrs, IState> 
               this.handleUserChange(user);
             }}
           >
-            {avatar(user)} {username(user)}
+            <Avatar user={user} /> {username(user)}
           </Button>
         ))
       );
     }
 
-    if (app.search.params().author) {
+    if (app.search.state.params().author) {
       // if author is set
       content.push(
         <Separator />,

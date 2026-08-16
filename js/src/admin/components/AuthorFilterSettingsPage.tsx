@@ -1,3 +1,4 @@
+import Form from 'flarum/common/components/Form';
 import app from 'flarum/admin/app';
 import ExtensionPage from 'flarum/admin/components/ExtensionPage';
 
@@ -6,7 +7,7 @@ export default class AuthorFilterSettingsPage extends ExtensionPage {
     return (
       <div className="ExtensionPage-settings AuthorFilterSettingsPage">
         <div className="container">
-          <div className="Form">
+          <Form>
             {this.buildSettingComponent({
               label: app.translator.trans('glowingblue-author-filter.admin.settings.min_length'),
               type: 'number',
@@ -21,7 +22,7 @@ export default class AuthorFilterSettingsPage extends ExtensionPage {
             })}
             <p className="helpText">{app.translator.trans('glowingblue-author-filter.admin.settings.intro')}</p>
             {this.submitButton()}
-          </div>
+          </Form>
         </div>
       </div>
     );
